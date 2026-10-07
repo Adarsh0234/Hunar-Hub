@@ -76,27 +76,20 @@ export const Products = () => {
   });
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.25rem 4rem' }}>
+    <div className="container page-container">
       {/* Header & Search */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '1.5rem',
-        marginBottom: '2.5rem'
-      }}>
+      <div className="page-header-flex">
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+          <h1 className="page-title">
             Handcrafted & Local Products
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+          <p className="page-subtitle">
             Directly from verified local artisans, cobblers, tailors, and micro-vendors.
           </p>
         </div>
 
         {/* Search Input */}
-        <div style={{ position: 'relative', width: '100%', maxWidth: '340px' }}>
+        <div className="search-box-wrapper">
           <input
             type="text"
             className="form-input"

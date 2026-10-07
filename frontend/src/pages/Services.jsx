@@ -70,25 +70,18 @@ export const Services = () => {
   });
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.25rem 4rem' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '1.5rem',
-        marginBottom: '2.5rem'
-      }}>
+    <div className="container page-container">
+      <div className="page-header-flex">
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+          <h1 className="page-title">
             Skilled Artisan Services
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+          <p className="page-subtitle">
             Book custom tailoring, restoration, pottery, repair work, and specialized local craft.
           </p>
         </div>
 
-        <div style={{ position: 'relative', width: '100%', maxWidth: '340px' }}>
+        <div className="search-box-wrapper">
           <input
             type="text"
             className="form-input"

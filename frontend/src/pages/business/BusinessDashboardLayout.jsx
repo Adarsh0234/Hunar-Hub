@@ -28,7 +28,7 @@ export const BusinessDashboardLayout = () => {
     <div className="dashboard-layout">
       {/* Sidebar */}
       <aside className="dashboard-sidebar">
-        <div style={{ padding: '0 0.75rem 1.25rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1rem' }}>
+        <div className="dashboard-sidebar-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
             <Sparkles size={16} color="var(--primary)" />
             <span style={{ fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--primary-dark)', letterSpacing: '0.05em' }}>
@@ -69,7 +69,7 @@ export const BusinessDashboardLayout = () => {
           <span>Services</span>
         </NavLink>
 
-        <span className="sidebar-title" style={{ marginTop: '1.25rem' }}>Customer Orders</span>
+        <span className="sidebar-title sidebar-title-orders">Customer Orders</span>
 
         <NavLink 
           to="/dashboard/orders" 

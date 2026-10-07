@@ -95,7 +95,7 @@ export const Cart = () => {
   }
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.25rem 4rem' }}>
+    <div className="container page-container">
       <div style={{ marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
           Your Shopping Cart
@@ -130,12 +130,7 @@ export const Cart = () => {
           </Link>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2.5rem',
-          alignItems: 'start'
-        }}>
+        <div className="cart-grid">
           {/* Cart Items List */}
           <div className="card" style={{ padding: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
@@ -159,15 +154,7 @@ export const Cart = () => {
                 return (
                   <div 
                     key={item.cart_item_id}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '1rem',
-                      paddingBottom: '1.25rem',
-                      borderBottom: '1px solid var(--border-color)'
-                    }}
+                    className="cart-item-row"
                   >
                     <div style={{ flex: '1 1 200px' }}>
                       <Link 

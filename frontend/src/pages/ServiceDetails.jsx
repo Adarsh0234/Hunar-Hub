@@ -155,7 +155,7 @@ export const ServiceDetails = () => {
     : null;
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.25rem 4rem' }}>
+    <div className="container page-container">
       <Link 
         to="/services" 
         style={{ 
@@ -171,12 +171,7 @@ export const ServiceDetails = () => {
         <span>Back to Services</span>
       </Link>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '3rem',
-        marginBottom: '4rem'
-      }}>
+      <div className="details-grid">
         {/* Service Overview Card */}
         <div style={{
           background: 'white',

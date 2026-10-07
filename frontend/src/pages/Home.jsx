@@ -37,13 +37,7 @@ export const Home = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section style={{
-        background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #f8fafc 100%)',
-        padding: '5rem 0 4.5rem',
-        borderBottom: '1px solid var(--border-color)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+      <section className="hero-section">
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: '720px' }}>
             <div style={{
@@ -58,14 +52,16 @@ export const Home = () => {
               fontWeight: '700',
               color: 'var(--primary-dark)',
               marginBottom: '1.25rem',
-              boxShadow: var_shadow_sm => 'var(--shadow-sm)'
+              boxShadow: 'var(--shadow-sm)',
+              maxWidth: '100%',
+              flexWrap: 'wrap'
             }}>
               <Sparkles size={16} color="var(--primary)" />
               <span>Connecting Local Talent with Everyday Customers</span>
             </div>
 
             <h1 style={{
-              fontSize: 'clamp(2.3rem, 5vw, 3.4rem)',
+              fontSize: 'clamp(1.85rem, 5vw, 3.4rem)',
               fontWeight: '800',
               color: 'var(--text-main)',
               lineHeight: 1.15,
@@ -84,7 +80,7 @@ export const Home = () => {
               Discover authentic handmade crafts, tailor alterations, clay pottery, repair services, and more — directly from hardworking micro-entrepreneurs in your community.
             </p>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div className="hero-actions">
               <Link to="/products" className="btn btn-primary btn-lg">
                 <ShoppingBag size={20} />
                 <span>Shop Products</span>

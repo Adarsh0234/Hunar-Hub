@@ -157,7 +157,7 @@ export const ProductDetails = () => {
     : null;
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.25rem 4rem' }}>
+    <div className="container page-container">
       <Link 
         to="/products" 
         style={{ 
@@ -173,25 +173,9 @@ export const ProductDetails = () => {
         <span>Back to Products</span>
       </Link>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '3rem',
-        marginBottom: '4rem'
-      }}>
+      <div className="details-grid">
         {/* Visual Box */}
-        <div style={{
-          background: 'white',
-          border: '1px solid var(--border-color)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '3rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '340px',
-          boxShadow: 'var(--shadow-sm)'
-        }}>
+        <div className="details-visual-box">
           <div style={{
             width: '100px',
             height: '100px',

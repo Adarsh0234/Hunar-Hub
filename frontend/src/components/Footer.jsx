@@ -10,12 +10,7 @@ export const Footer = () => {
       marginTop: 'auto'
     }}>
       <div className="container">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '2rem',
-          marginBottom: '2.5rem'
-        }}>
+        <div className="footer-grid">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem' }}>
               <div className="brand-badge" style={{ width: '32px', height: '32px', fontSize: '1rem' }}>H</div>
