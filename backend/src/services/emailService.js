@@ -1,20 +1,27 @@
-import nodemailer from "nodemailer";
-import crypto from "crypto";
-
-//creates a connection configuration (smtp server ) for sending emails
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD
-    }
-});
-//exports the sendEmail function which takes the recipient's email, subject, and body of the email as parameters
 export const sendEmail = async (to, subject, text) => {
-    await transporter.sendMail({
-        from: process.env.SMTP_USER,
-        to,
-        subject,
-        text
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+            "api-key": process.env.BREVO_API_KEY,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            sender: {
+                name: process.env.BREVO_SENDER_NAME || "HunarHub",
+                email: process.env.BREVO_SENDER_EMAIL
+            },
+            to: [
+                {
+                    email: to
+                }
+            ],
+            subject,
+            textContent: text
+        })
     });
+
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Brevo email failed: ${error}`);
+    }
 };
