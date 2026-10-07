@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import productService from '../services/productService';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { 
-  ShoppingBag, 
-  ShoppingCart, 
-  Search, 
-  Star, 
-  Check, 
+import {
+  ShoppingBag,
+  ShoppingCart,
+  Search,
+  Star,
+  Check,
   AlertCircle,
   PackageCheck,
   Eye
 } from 'lucide-react';
 
 export const Products = () => {
+  const [searchParams] = useSearchParams();
+  const categoryId = searchParams.get('category');
   const { isAuthenticated, isCustomer } = useAuth();
   const { addToCart } = useCart();
 
@@ -33,7 +35,9 @@ export const Products = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await productService.getProducts();
+      const data = categoryId
+        ? await productService.getProductsByCategory(categoryId)
+        : await productService.getProducts();
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load products:', err);
@@ -101,10 +105,10 @@ export const Products = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Search 
-            size={18} 
-            color="var(--text-light)" 
-            style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} 
+          <Search
+            size={18}
+            color="var(--text-light)"
+            style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }}
           />
         </div>
       </div>
@@ -140,8 +144,8 @@ export const Products = () => {
             const isBusy = addingId === product.product_id;
 
             return (
-              <div 
-                key={product.product_id} 
+              <div
+                key={product.product_id}
                 className="card card-hover"
                 style={{
                   display: 'flex',
@@ -180,8 +184,8 @@ export const Products = () => {
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', gap: '0.65rem' }}>
-                  <Link 
-                    to={`/products/${product.product_id}`} 
+                  <Link
+                    to={`/products/${product.product_id}`}
                     className="btn btn-secondary"
                     style={{ flex: 1 }}
                   >
@@ -195,10 +199,10 @@ export const Products = () => {
                       onClick={() => handleAddToCart(product)}
                       disabled={isOutOfStock || isBusy}
                       className={`btn ${isAdded ? 'btn-secondary' : 'btn-primary'}`}
-                      style={{ 
-                        width: '46px', 
-                        height: '42px', 
-                        padding: 0, 
+                      style={{
+                        width: '46px',
+                        height: '42px',
+                        padding: 0,
                         flexShrink: 0,
                         display: 'inline-flex',
                         alignItems: 'center',

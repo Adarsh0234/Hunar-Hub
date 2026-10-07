@@ -72,7 +72,7 @@ export const Home = () => {
               letterSpacing: '-0.03em',
               marginBottom: '1.25rem'
             }}>
-              Support Local Artisans & Book Skilled Services with <span style={{ color: 'var(--primary)' }}>HunarHub</span>
+              Support Local Entrepreneurs & Book Skilled Services with <span style={{ color: 'var(--primary)' }}>HunarHub</span>
             </h1>
 
             <p style={{
@@ -153,7 +153,7 @@ export const Home = () => {
                     {cat.category_name}
                   </h3>
                   <Link 
-                    to={`/products?category=${encodeURIComponent(cat.category_name)}`} 
+                    to={`/products?category=${cat.category_id}`}
                     style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
                   >
                     <span>View Artisans</span>

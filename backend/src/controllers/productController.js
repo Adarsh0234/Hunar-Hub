@@ -37,6 +37,22 @@ export const getProducts = async (req, res) => {
     return res.status(200).json(result.rows);
 };
 
+export const getProductsByCategory = async (req, res) => {
+    const { categoryId } = req.params;
+
+    const result = await pool.query(
+        `SELECT p.*
+         FROM products p
+         JOIN business_profiles bp
+           ON p.business_id = bp.business_id
+         WHERE bp.category_id = $1
+         ORDER BY p.created_at DESC`,
+        [categoryId]
+    );
+
+    return res.status(200).json(result.rows);
+};
+
 export const getBusinessProducts = async (req, res) => {
     const { businessId } = req.params;
     const result = await pool.query(

@@ -2,6 +2,7 @@ import api from './api';
 
 export const productService = {
   getProducts: () => api.get('/api/products'),
+  getProductsByCategory: (categoryId) => api.get(`/api/products/category/${categoryId}`),
   getBusinessProducts: (businessId) => api.get(`/api/products/business/${businessId}`),
   getMyProducts: () => api.get('/api/products/my-products'),
   createProduct: (data) => api.post('/api/products', data),
