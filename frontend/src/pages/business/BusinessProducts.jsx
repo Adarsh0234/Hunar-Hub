@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import productService from '../../services/productService';
-import { 
-  Package, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Package,
+  Plus,
+  Edit3,
+  Trash2,
+  AlertCircle,
+  CheckCircle2,
   X,
   Boxes
 } from 'lucide-react';
@@ -27,6 +27,7 @@ export const BusinessProducts = () => {
     description: '',
     price: '',
     stock: '',
+    image: null
   });
 
   useEffect(() => {
@@ -98,23 +99,41 @@ export const BusinessProducts = () => {
 
     try {
       setActionLoading(true);
+
       if (editingProduct) {
         // Edit existing product
-        await productService.updateProduct(editingProduct.product_id, {
-          product_name: formData.product_name,
-          description: formData.description,
-          price: priceNum,
-          stock: stockNum,
-        });
+        const data = new FormData();
+
+        data.append('product_name', formData.product_name);
+        data.append('description', formData.description);
+        data.append('price', priceNum);
+        data.append('stock', stockNum);
+
+        if (formData.image) {
+          data.append('image', formData.image);
+        }
+
+        await productService.updateProduct(
+          editingProduct.product_id,
+          data
+        );
+
         setSuccess('Product updated successfully!');
       } else {
         // Create new product
-        await productService.createProduct({
-          product_name: formData.product_name,
-          description: formData.description,
-          price: priceNum,
-          stock: stockNum,
-        });
+        const data = new FormData();
+
+        data.append('product_name', formData.product_name);
+        data.append('description', formData.description);
+        data.append('price', priceNum);
+        data.append('stock', stockNum);
+
+        if (formData.image) {
+          data.append('image', formData.image);
+        }
+
+        await productService.createProduct(data);
+
         setSuccess('Product created successfully!');
       }
 
@@ -219,22 +238,50 @@ export const BusinessProducts = () => {
                       {prod.stock > 0 ? `${prod.stock} in stock` : 'Out of stock'}
                     </span>
                   </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                      <button 
-                        onClick={() => handleOpenEdit(prod)} 
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '0.5rem',
+                        flexShrink: 0
+                      }}
+                    >
+                      <button
+                        onClick={() => handleOpenEdit(prod)}
                         className="btn btn-secondary btn-sm"
                         title="Edit Product"
+                        style={{
+                          width: '42px',
+                          height: '38px',
+                          minWidth: '42px',
+                          flexShrink: 0,
+                          padding: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
                       >
-                        <Edit3 size={14} />
+                        <Edit3 size={16} />
                       </button>
-                      <button 
-                        onClick={() => handleDeleteProduct(prod.product_id, prod.product_name)} 
+
+                      <button
+                        onClick={() => handleDeleteProduct(prod.product_id, prod.product_name)}
                         className="btn btn-outline-danger btn-sm"
                         title="Delete Product"
                         disabled={actionLoading}
+                        style={{
+                          width: '42px',
+                          height: '38px',
+                          minWidth: '42px',
+                          flexShrink: 0,
+                          padding: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
@@ -253,8 +300,8 @@ export const BusinessProducts = () => {
               <h2 style={{ fontSize: '1.35rem', fontWeight: '800' }}>
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h2>
-              <button 
-                onClick={handleCloseModal} 
+              <button
+                onClick={handleCloseModal}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
               >
                 <X size={20} />
@@ -320,6 +367,26 @@ export const BusinessProducts = () => {
                   value={formData.description}
                   onChange={handleFormChange}
                 />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="prod_image">Product Image</label>
+                <input
+                  id="prod_image"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  className="form-input"
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      image: e.target.files[0]
+                    }))
+                  }
+                />
+                <small style={{ color: 'var(--text-muted)' }}>
+                  Maximum size: 2 MB
+                </small>
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.5rem' }}>

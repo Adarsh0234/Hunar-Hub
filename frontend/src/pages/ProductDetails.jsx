@@ -4,13 +4,13 @@ import productService from '../services/productService';
 import reviewService from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { 
-  Star, 
-  ShoppingCart, 
-  ArrowLeft, 
-  Check, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Star,
+  ShoppingCart,
+  ArrowLeft,
+  Check,
+  AlertCircle,
+  CheckCircle2,
   MessageSquare,
   ShieldAlert,
   Boxes
@@ -50,7 +50,7 @@ export const ProductDetails = () => {
       // Load products list and find this one
       const allProducts = await productService.getProducts();
       const found = allProducts.find((p) => p.product_id === parseInt(productId, 10));
-      
+
       if (!found) {
         setError('Product not found.');
         setLoading(false);
@@ -152,21 +152,21 @@ export const ProductDetails = () => {
     );
   }
 
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) 
+  const averageRating = reviews.length > 0
+    ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
     : null;
 
   return (
     <div className="container page-container">
-      <Link 
-        to="/products" 
-        style={{ 
-          display: 'inline-flex', 
-          alignItems: 'center', 
-          gap: '0.4rem', 
-          color: 'var(--text-muted)', 
+      <Link
+        to="/products"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          color: 'var(--text-muted)',
           fontWeight: '600',
-          marginBottom: '2rem' 
+          marginBottom: '2rem'
         }}
       >
         <ArrowLeft size={16} />
@@ -176,19 +176,36 @@ export const ProductDetails = () => {
       <div className="details-grid">
         {/* Visual Box */}
         <div className="details-visual-box">
-          <div style={{
-            width: '100px',
-            height: '100px',
-            borderRadius: 'var(--radius-full)',
-            background: 'var(--primary-light)',
-            color: 'var(--primary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '1.5rem'
-          }}>
-            <Boxes size={48} />
-          </div>
+          {product.image_data ? (
+            <img
+              src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/products/${product.product_id}/image`}
+              alt={product.product_name}
+              style={{
+                width: '100%',
+                maxWidth: '400px',
+                height: '400px',
+                objectFit: 'contain',
+                background: '#fff',
+                borderRadius: '12px',
+                marginBottom: '1.5rem'
+              }}
+            />
+          ) : (
+            <div style={{
+              width: '100px',
+              height: '100px',
+              borderRadius: 'var(--radius-full)',
+              background: 'var(--primary-light)',
+              color: 'var(--primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '1.5rem'
+            }}>
+              <Boxes size={48} />
+            </div>
+          )}
+
           <span className={`badge ${product.stock > 0 ? 'badge-delivered' : 'badge-cancelled'}`}>
             {product.stock > 0 ? `${product.stock} Units Available` : 'Currently Sold Out'}
           </span>

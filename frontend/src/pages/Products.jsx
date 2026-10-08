@@ -149,10 +149,26 @@ export const Products = () => {
                 }}
               >
                 <div>
+                  {product.image_data && (
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/products/${product.product_id}/image`}
+                      alt={product.product_name}
+                      style={{
+                        width: '100%',
+                        height: '220px',
+                        objectFit: 'contain',
+                        background: '#fff',
+                        borderRadius: '10px',
+                        marginBottom: '1rem'
+                      }}
+                    />
+                  )}
+
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.75rem' }}>
                     <span className={`badge ${isOutOfStock ? 'badge-cancelled' : 'badge-delivered'}`}>
                       {isOutOfStock ? 'Sold Out' : `${product.stock} In Stock`}
                     </span>
+
                     <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)' }}>
                       ₹{Number(product.price).toFixed(2)}
                     </span>
@@ -204,11 +220,28 @@ export const Products = () => {
                       title="Add to Cart"
                     >
                       {isAdded ? (
-                        <Check size={20} color="var(--success)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                        <Check
+                          size={20}
+                          color="var(--success)"
+                          strokeWidth={2.5}
+                          style={{ flexShrink: 0 }}
+                        />
                       ) : isBusy ? (
-                        <span className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                        <span
+                          className="spinner"
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            borderWidth: '2px'
+                          }}
+                        ></span>
                       ) : (
-                        <ShoppingCart size={20} strokeWidth={2.2} color="white" style={{ flexShrink: 0 }} />
+                        <ShoppingCart
+                          size={20}
+                          strokeWidth={2.2}
+                          color="white"
+                          style={{ flexShrink: 0 }}
+                        />
                       )}
                     </button>
                   )}

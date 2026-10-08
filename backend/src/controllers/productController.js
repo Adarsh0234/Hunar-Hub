@@ -17,13 +17,15 @@ export const createProduct = async (req, res) => {
         price,
         stock
     } = req.body;
+
+    const imageData = req.file ? req.file.buffer : null;
     const businessId = result.rows[0].business_id;
 
     await pool.query(
         `INSERT INTO products
-     (business_id, product_name, description, price, stock)
-     VALUES ($1, $2, $3, $4, $5)`,
-        [businessId, product_name, description, price, stock]
+     (business_id, product_name, description, price, stock, image_data)
+     VALUES ($1, $2, $3, $4, $5, $6)`,
+        [businessId, product_name, description, price, stock, imageData]
     );
     return res.status(201).json({
         message: "Product created successfully"
@@ -81,7 +83,9 @@ export const updateProduct = async (req, res) => {
         description,
         price,
         stock
-    } = req.body;
+    } = req.body || {};
+
+    const imageData = req.file ? req.file.buffer : null;
 
     const businessId = businessResult.rows[0].business_id;
     // const result = await pool.query(
@@ -109,6 +113,11 @@ export const updateProduct = async (req, res) => {
     if (stock !== undefined) {
         fields.push(`stock = $${values.length + 1}`);
         values.push(stock);
+    }
+
+    if (imageData) {
+        fields.push(`image_data = $${values.length + 1}`);
+        values.push(imageData);
     }
 
     if (fields.length === 0) {
@@ -195,4 +204,21 @@ export const getMyProducts = async (req, res) => {
     );
 
     return res.status(200).json(result.rows);
+};
+export const getProductImage = async (req, res) => {
+    const { productId } = req.params;
+
+    const result = await pool.query(
+        `SELECT image_data
+         FROM products
+         WHERE product_id = $1`,
+        [productId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].image_data) {
+        return res.status(404).json({ message: "Product image not found" });
+    }
+
+    res.set("Content-Type", "image/jpeg");
+    res.send(result.rows[0].image_data);
 };
