@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import orderService from '../../services/orderService';
-import { 
-  ShoppingBag, 
-  Eye, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  ShoppingBag,
+  Eye,
+  AlertCircle,
+  CheckCircle2,
   X,
   Truck,
   CheckCheck
@@ -21,10 +21,6 @@ export const BusinessOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
 
-  useEffect(() => {
-    loadBusinessOrders();
-  }, []);
-
   const loadBusinessOrders = async () => {
     try {
       setLoading(true);
@@ -39,6 +35,21 @@ export const BusinessOrders = () => {
     }
   };
 
+  useEffect(() => {
+    loadBusinessOrders();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedOrder) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedOrder]);
+
   const handleViewDetails = async (orderId) => {
     try {
       setError(null);
@@ -48,7 +59,6 @@ export const BusinessOrders = () => {
       setError(err.message || 'Could not load order details.');
     }
   };
-
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
       setUpdatingId(orderId);
@@ -109,7 +119,6 @@ export const BusinessOrders = () => {
           <span>{success}</span>
         </div>
       )}
-
       {loading ? (
         <div className="loading-container">
           <div className="spinner"></div>
@@ -186,8 +195,24 @@ export const BusinessOrders = () => {
 
       {/* Business Order Details Modal */}
       {selectedOrder && (
-        <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedOrder(null)}
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            overflow: 'hidden',
+            overscrollBehavior: 'none'
+          }}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxHeight: '85vh',
+              overflowY: 'auto',
+              overscrollBehavior: 'contain'
+            }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '800' }}>
@@ -197,8 +222,8 @@ export const BusinessOrders = () => {
                   Customer ID: {selectedOrder.customer_id} · {new Date(selectedOrder.created_at).toLocaleString()}
                 </span>
               </div>
-              <button 
-                onClick={() => setSelectedOrder(null)} 
+              <button
+                onClick={() => setSelectedOrder(null)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
               >
                 <X size={20} />
@@ -237,11 +262,11 @@ export const BusinessOrders = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
               {selectedOrder.items?.map((item, idx) => (
-                <div 
-                  key={idx} 
-                  style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '0.65rem 0',
                     borderBottom: '1px solid var(--border-color)'
