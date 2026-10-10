@@ -910,11 +910,13 @@ button, input, select, textarea {
 @media (max-width: 900px) {
   .dashboard-layout {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
   }
   .dashboard-sidebar {
     border-right: none;
     border-bottom: 1px solid var(--border-color);
     flex-direction: row;
+    align-items: center;
     overflow-x: auto;
     padding: 0.65rem 0.85rem;
     gap: 0.5rem;

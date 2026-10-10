@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import serviceService from '../../services/serviceService';
-import { 
-  Wrench, 
-  Plus, 
-  Edit3, 
+import {
+  Wrench,
+  Plus,
+  Edit3,
   Trash2, 
   AlertCircle, 
   CheckCircle2, 
@@ -200,22 +200,49 @@ export const BusinessServices = () => {
                   <td style={{ fontWeight: '700', color: 'var(--secondary)' }}>
                     ₹{Number(srv.price).toFixed(2)}
                   </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '0.5rem',
+                        flexShrink: 0
+                      }}
+                    >
                       <button 
                         onClick={() => handleOpenEdit(srv)} 
                         className="btn btn-secondary btn-sm"
                         title="Edit Service"
+                        style={{
+                          width: '42px',
+                          height: '38px',
+                          minWidth: '42px',
+                          flexShrink: 0,
+                          padding: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
                       >
-                        <Edit3 size={14} />
+                        <Edit3 size={16} />
                       </button>
                       <button 
                         onClick={() => handleDeleteService(srv.service_id, srv.service_name)} 
                         className="btn btn-outline-danger btn-sm"
                         title="Delete Service"
                         disabled={actionLoading}
+                        style={{
+                          width: '42px',
+                          height: '38px',
+                          minWidth: '42px',
+                          flexShrink: 0,
+                          padding: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
