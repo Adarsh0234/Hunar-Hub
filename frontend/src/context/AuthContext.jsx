@@ -93,6 +93,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const resendOtp = async (email) => {
+    setAuthError(null);
+    try {
+      const res = await authService.resendOtp(email);
+      return res;
+    } catch (err) {
+      setAuthError(err.message || 'Resend OTP failed');
+      throw err;
+    }
+  };
+
   const logout = () => {
     removeToken();
     setTokenState(null);
@@ -111,6 +122,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     verifyOtp,
+    resendOtp,
     logout,
     refreshUser: loadCurrentUser,
   };

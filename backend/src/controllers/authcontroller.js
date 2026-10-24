@@ -85,18 +85,20 @@ export const registerUser = async (req, res) => {
         business_name,
         category_id: categoryId,
         description,
-        address
+        address,
+        createdAt: Date.now()
     });
 
     //generate OTP
     const otp = crypto.randomInt(100000, 1000000);
-    console.log("Generated OTP is: ", otp);
+    // console.log("Generated OTP is: ", otp);
 
     const otpHash = await bcrypt.hash(otp.toString(), 10);
     // const expiresAt = new Date(Date.now() + 60 * 1000);
     otpStore.set(email, {
         otpHash,
-        expiresAt: Date.now() + 60 * 1000
+        expiresAt: Date.now() + 60 * 1000,
+        lastSentAt: Date.now()
     });
 
     await sendEmail(
@@ -116,16 +118,15 @@ export const verifyOtp = async (req, res) => {
 
     if (!otpData) {
         return res.status(400).json({
-            message: "OTP not found or already used"
+            message: "OTP not found or already used. Please request a new OTP."
         });
     }
 
     if (Date.now() > otpData.expiresAt) {
         otpStore.delete(email);
-        pendingRegistrations.delete(email);
 
         return res.status(400).json({
-            message: "OTP has expired"
+            message: "OTP has expired. Please request a new OTP."
         });
     }
 
@@ -180,6 +181,82 @@ export const verifyOtp = async (req, res) => {
     return res.status(201).json({
         message: "Registration completed successfully"
     });
+};
+
+export const resendOtp = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({
+            message: "Email is required"
+        });
+    }
+
+    // Check if user is already registered and verified
+    const existingUser = await pool.query(
+        "SELECT user_id, email_verified FROM users WHERE email = $1",
+        [email]
+    );
+
+    if (existingUser.rows.length > 0 && existingUser.rows[0].email_verified) {
+        return res.status(400).json({
+            message: "This email is already registered and verified. Please log in."
+        });
+    }
+
+    const registrationData = pendingRegistrations.get(email);
+
+    if (!registrationData) {
+        return res.status(400).json({
+            message: "No pending registration found for this email. Please register again."
+        });
+    }
+
+    // Check if registration session has expired (30 minutes)
+    if (registrationData.createdAt && (Date.now() - registrationData.createdAt > 30 * 60 * 1000)) {
+        pendingRegistrations.delete(email);
+        otpStore.delete(email);
+        return res.status(400).json({
+            message: "Registration session has expired. Please register again."
+        });
+    }
+
+    // Rate-limiting cooldown (15 seconds) to avoid spamming
+    const existingOtp = otpStore.get(email);
+    if (existingOtp && existingOtp.lastSentAt && (Date.now() - existingOtp.lastSentAt < 15 * 1000)) {
+        const remainingSec = Math.ceil((15 * 1000 - (Date.now() - existingOtp.lastSentAt)) / 1000);
+        return res.status(429).json({
+            message: `Please wait ${remainingSec} seconds before requesting a new OTP.`
+        });
+    }
+
+    // Generate new OTP
+    const otp = crypto.randomInt(100000, 1000000);
+    // console.log("Resent OTP is: ", otp);
+
+    const otpHash = await bcrypt.hash(otp.toString(), 10);
+    otpStore.set(email, {
+        otpHash,
+        expiresAt: Date.now() + 60 * 1000,
+        lastSentAt: Date.now()
+    });
+
+    try {
+        await sendEmail(
+            email,
+            "HunarHub Email Verification",
+            `Your new OTP is ${otp}. It expires in 1 minute.`
+        );
+
+        return res.status(200).json({
+            message: "A new OTP has been sent to your email."
+        });
+    } catch (err) {
+        console.error("Failed to send OTP email:", err);
+        return res.status(500).json({
+            message: "Failed to send OTP email. Please try again."
+        });
+    }
 };
 
 export const loginUser = async (req, res) => {

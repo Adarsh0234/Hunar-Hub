@@ -13,12 +13,13 @@ import {
   MapPin, 
   KeyRound,
   CheckCircle2,
-  AlertCircle 
+  AlertCircle,
+  RotateCcw
 } from 'lucide-react';
 import { ACCOUNT_TYPES } from '../constants';
 
 export const Register = () => {
-  const { register, verifyOtp } = useAuth();
+  const { register, verifyOtp, resendOtp } = useAuth();
   const navigate = useNavigate();
 
   // Tab: 'Customer' | 'Business User'
@@ -50,6 +51,19 @@ export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successInfo, setSuccessInfo] = useState(null);
+  const [resendCountdown, setResendCountdown] = useState(60);
+  const [resending, setResending] = useState(false);
+
+  // Countdown timer for Resend OTP
+  useEffect(() => {
+    let timer;
+    if (step === 2 && resendCountdown > 0) {
+      timer = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [step, resendCountdown]);
 
   // Fetch categories when switching to Business User
   useEffect(() => {
@@ -117,6 +131,7 @@ export const Register = () => {
 
       const res = await register(payload);
       setSuccessInfo(res.message || 'OTP sent to your email. Please check your inbox.');
+      setResendCountdown(60);
       setStep(2); // Advance to OTP verification
     } catch (err) {
       setError(err.message || 'Registration failed. Please verify your details.');
@@ -147,6 +162,24 @@ export const Register = () => {
       setError(err.message || 'Invalid or expired OTP. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resending || loading || resendCountdown > 0) return;
+    setError(null);
+    setSuccessInfo(null);
+
+    try {
+      setResending(true);
+      const res = await resendOtp(formData.email);
+      setSuccessInfo(res.message || 'A new OTP has been sent to your email.');
+      setOtp('');
+      setResendCountdown(60);
+    } catch (err) {
+      setError(err.message || 'Failed to resend OTP. Please try again.');
+    } finally {
+      setResending(false);
     }
   };
 
@@ -425,13 +458,43 @@ export const Register = () => {
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
                 The OTP is valid for 1 minute. Please check your inbox and spam folder.
               </p>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.75rem', fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  Didn't receive code or expired?
+                </span>
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={resendCountdown > 0 || resending || loading}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: resendCountdown > 0 ? 'var(--text-muted)' : 'var(--primary)',
+                    fontWeight: '600',
+                    cursor: resendCountdown > 0 ? 'not-allowed' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    textDecoration: resendCountdown > 0 ? 'none' : 'underline'
+                  }}
+                >
+                  <RotateCcw size={14} style={{ animation: resending ? 'spin 1s linear infinite' : 'none' }} />
+                  {resending
+                    ? 'Resending...'
+                    : resendCountdown > 0
+                    ? `Resend in ${resendCountdown}s`
+                    : 'Resend OTP'}
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
               className="btn btn-primary btn-lg"
               style={{ width: '100%', marginTop: '0.75rem' }}
-              disabled={loading}
+              disabled={loading || resending}
             >
               {loading ? (
                 <>
@@ -451,8 +514,9 @@ export const Register = () => {
                 setStep(1);
                 setError(null);
                 setSuccessInfo(null);
+                setResendCountdown(60);
               }}
-              disabled={loading}
+              disabled={loading || resending}
             >
               Back to Registration Form
             </button>
