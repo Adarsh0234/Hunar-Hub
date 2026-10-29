@@ -16,31 +16,59 @@ export const createServiceReview = async (req, res) => {
         });
     }
 
-    const requestResult = await pool.query(
-        `SELECT request_id
-         FROM service_requests
-         WHERE customer_id = $1
-         AND service_id = $2
-         AND request_status = 'Completed'`,
-        [customerId, service_id]
-    );
+    try {
+        const requestResult = await pool.query(
+            `SELECT request_id
+             FROM service_requests
+             WHERE customer_id = $1
+             AND service_id = $2
+             AND request_status = 'Completed'`,
+            [customerId, service_id]
+        );
 
-    if (requestResult.rows.length === 0) {
-        return res.status(400).json({
-            message: "You can review a service only after completion"
+        if (requestResult.rows.length === 0) {
+            return res.status(400).json({
+                message: "You can review a service only after completion"
+            });
+        }
+
+        const existingReview = await pool.query(
+            `SELECT review_id
+             FROM service_reviews
+             WHERE customer_id = $1
+             AND service_id = $2`,
+            [customerId, service_id]
+        );
+
+        if (existingReview.rows.length > 0) {
+            return res.status(400).json({
+                message: "You have already reviewed this service"
+            });
+        }
+
+        await pool.query(
+            `INSERT INTO service_reviews
+             (customer_id, service_id, rating, review_text)
+             VALUES ($1, $2, $3, $4)`,
+            [customerId, service_id, rating, review]
+        );
+
+        return res.status(201).json({
+            message: "Service review added successfully"
+        });
+    } catch (error) {
+        if (error.code === "23505") {
+            return res.status(400).json({
+                message: "You have already reviewed this service"
+            });
+        }
+
+        return res.status(500).json({
+            message: error.message || "Failed to submit service review"
         });
     }
 
-    await pool.query(
-        `INSERT INTO service_reviews
-         (customer_id, service_id, rating, review_text)
-         VALUES ($1, $2, $3, $4)`,
-        [customerId, service_id, rating, review]
-    );
-
-    return res.status(201).json({
-        message: "Service review added successfully"
-    });
+    
 };
 
 export const getServiceReviews = async (req, res) => {

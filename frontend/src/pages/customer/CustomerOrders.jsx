@@ -138,7 +138,6 @@ export const CustomerOrders = () => {
                 <th>Date Placed</th>
                 <th>Total Amount</th>
                 <th>Order Status</th>
-                <th>Payment</th>
                 <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
@@ -159,11 +158,6 @@ export const CustomerOrders = () => {
                     <td>
                       <span className={`badge ${getStatusBadge(ord.order_status)}`}>
                         {ord.order_status}
-                      </span>
-                    </td>
-                    <td>
-                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        {ord.payment_status || 'Pending'}
                       </span>
                     </td>
                     <td style={{ textAlign: 'right' }}>
